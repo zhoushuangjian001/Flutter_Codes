@@ -20,26 +20,66 @@ class TextApp extends StatelessWidget {
 class TextFirstRoute extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Column(
-        children: <Widget>[
-          Text(
-            "Text的样式一",
-            textAlign: TextAlign.center,
-          ),
-          Text(
-            "Text的样式二" * 3,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            textAlign: TextAlign.justify,
-          ),
-          Text(
-            "Text的样式三s" *5,
-            textScaleFactor: 2,
-            textAlign: TextAlign.end,
-          )
-        ],
-      ),
-    );
+    return  getTextDircetion();
   }
 }
+
+// TextAlign 的介绍
+Widget getTextAlign(){
+  return Center(
+    child: Column(
+      children: <Widget>[
+        Text(
+          "样式一",
+          textAlign: TextAlign.left,
+        ),
+        Text(
+          "样式二",
+          textAlign: TextAlign.right,
+        ),
+        Text(
+          "样式三",
+          textAlign: TextAlign.center,
+        ),
+        Text(
+          "样式四",
+          textAlign: TextAlign.justify,
+        ),
+        Text(
+          "样式五",
+          textAlign: TextAlign.start,
+        ),
+        Text(
+          "样式六",
+          textAlign: TextAlign.end,
+        )
+      ],
+    ),
+  );
+}
+
+// TextDirection 的介绍
+Widget getTextDircetion(){
+  return Center(
+    child: Column(
+      children: <Widget>[
+        Text(
+          "abcdefghigk" * 6,
+          textDirection: TextDirection.ltr,
+        ),
+        Text(
+          "abcdefghigk" * 6,
+          textDirection: TextDirection.rtl,
+        ),
+        Expanded(
+          child: Text(
+            "12345678910",
+            textDirection: TextDirection.rtl,
+          ),
+        )
+      ],
+    ),
+  );
+}
+
+
