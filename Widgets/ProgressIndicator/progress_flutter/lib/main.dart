@@ -92,6 +92,8 @@ Widget getDiySizeOfProgressIndicator (){
           ),
         )
       ],
+
+      
     ),
   );
 }

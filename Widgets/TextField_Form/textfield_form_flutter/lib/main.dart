@@ -22,7 +22,7 @@ class MyApp extends StatelessWidget {
 class  MainScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return selecdText();
+    return getRouteBtn(context);
   }
 }
 
@@ -157,4 +157,243 @@ Widget selecdText(){
       controller: _teditVC,
     ),
   );
+}
+
+// 键盘
+Widget getKeyBoardType(){
+  return Center(
+    child: TextField(
+      decoration: InputDecoration(
+        labelText: "请输",
+        hintText: "请输入手机号",
+      ),
+      maxLines: 3,
+      // number ： 数字键盘 （0-9和删除键）
+      // text 和 datetime：小写字母（a-z 和左下角为数字、空格、done ）
+      // multiline:  小写字母（a-z 和左下角为数字、空格、return 换行 。如果 maxLines 为1 ,点击return 为收起键盘，否则为换行）
+      // phone:  数字键盘 （0-9和删除键 和 +*#）
+      // emailAddress:  小写字母（a-z 和左下角为数字、空格、@、 . 、done ）
+      // url:  小写字母（a-z 和左下角为数字、.com、/、 . 、done ）
+      keyboardType:TextInputType.emailAddress,
+      textInputAction: TextInputAction.send,
+    ),
+  );
+}
+
+// 登录输入框
+Widget getLoginTextField(){
+  return Center(
+    child: Column(
+      children: <Widget>[
+        TextField(
+          autofocus: true,
+          decoration: InputDecoration(
+            labelText: "用户名",
+            hintText: "用户邮箱",
+            prefixIcon: Icon(Icons.person)
+          ),
+        ),
+        TextField(
+          decoration: InputDecoration(
+            labelText: "密码",
+            hintText: "请输入密码",
+            prefixIcon: Icon(Icons.lock)
+          ),
+          obscureText: true,
+        )
+      ],
+    ),
+  );
+}
+
+// 焦点控制
+// 默认情况下，焦点由 FocusScope 来管理，它代表焦点控制范围，可以在这个范围内可以通过 FocusScopeNode 在输入框之间移动焦点、设置默认焦点等。
+
+class FocusTestRoute extends StatefulWidget {
+  _FocusTestRoute createState() => _FocusTestRoute();
+}
+
+class _FocusTestRoute extends State<FocusTestRoute> {
+  FocusNode focusNode1 = FocusNode();
+  FocusNode focusNode2 = FocusNode();
+  FocusScopeNode focusScopeNode;
+  @override
+  Widget build(BuildContext context) {
+
+  // 监听焦点的变化
+  focusNode1.addListener((){
+    print(focusNode1.hasFocus);
+  });
+    return Padding(
+      padding: EdgeInsets.all(16),
+      child: Column(
+        children: <Widget>[
+          TextField(
+            autofocus: true,
+            focusNode: focusNode1,
+            decoration: InputDecoration(
+              labelText: "第一个输入框"
+            ),
+          ),
+          TextField(
+            focusNode: focusNode2,
+            decoration: InputDecoration(
+              labelText: "第二个输入框"
+            ),
+          ),
+          Builder(builder: (ctx){
+            return Column(
+              children: <Widget>[
+                RaisedButton(
+                  child: Text("移动焦点"),
+                  onPressed: (){
+                    // 第一种写法
+                    //FocusScope.of(context).requestFocus(focusNode2);
+
+                    // 第二种写法
+                    if(null ==focusScopeNode){
+                      focusScopeNode = FocusScope.of(context);
+                    }
+                    focusScopeNode.requestFocus(focusNode2);
+                  },
+                ),
+                RaisedButton(
+                  child: Text("隐藏键盘"),
+                  onPressed: (){
+                    focusNode1.unfocus();
+                    focusNode2.unfocus();
+                  },
+                )
+              ],
+            );
+          })
+        ],
+      ),
+    );
+  }
+}
+
+// 隐藏下划线，自定义下划线
+Widget getHiddenBottonLine(){
+  return Center(
+    child: Container(
+      child: TextField(
+        keyboardType: TextInputType.emailAddress,
+        decoration: InputDecoration(
+          labelText: "Email",
+          hintText: "请输入电子邮件地址",
+          prefixIcon: Icon(Icons.email),
+          // 隐藏下划线
+          border: InputBorder.none
+        ),      
+      ),
+      decoration: BoxDecoration(
+        border: Border(bottom: BorderSide(color: Colors.red,width: 2))
+      ),
+    )
+  );
+}
+
+
+// Form 表单
+// 作用： 它可以对输入框分组，然后进行统一操作，比如校验内容，输入框重置以及保存输入内容。
+
+Widget getRouteBtn (BuildContext context){
+  return Center(
+    child: RaisedButton(
+      child: Text("登录"),
+      onPressed: (){
+        Navigator.push(context, MaterialPageRoute(
+          builder: (context){
+            return FormRoute();
+          }
+        ));
+      },
+    ),
+  );
+}
+
+
+class FormRoute extends StatefulWidget {
+  _FormRoute createState() => _FormRoute();
+}
+
+class _FormRoute extends State<FormRoute> {
+  TextEditingController _unnameController = TextEditingController();
+  TextEditingController _pwdController = TextEditingController();
+  GlobalKey _formKey = GlobalKey<FormState>();
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text("Form Test"),
+      ),
+      body: Padding(
+        padding: EdgeInsets.symmetric(vertical: 16, horizontal: 24) ,
+        child: Form(
+          key: _formKey,
+          autovalidate: true,
+          child: Column(
+            children: <Widget>[
+              TextFormField(
+                autofocus: true,
+                controller: _unnameController,
+                decoration: InputDecoration(
+                  labelText: "用户名",
+                  hintText: "用户名或邮箱",
+                  icon: Icon(Icons.person)
+                ),
+                // 检验
+                validator: (value){
+                  print("检验");
+                  print(value);
+                  return value.trim().length > 0 ? null:"用户名不能为空";
+                },
+              ),
+              TextFormField(
+                controller: _pwdController,
+                decoration: InputDecoration(
+                  labelText: "密码",
+                  hintText: "您的登录密码",
+                  icon: Icon(Icons.lock)
+                ),
+                // 安全
+                obscureText: true,
+                // 校验
+                validator: (value){
+                  return value.trim().length > 5 ? null:"密码不能少于6 位";
+                },
+              ),
+              Padding(
+                padding: EdgeInsets.only(top: 28.0),
+                child: Column(
+                  children: <Widget>[
+                    Expanded(
+                      child: RaisedButton(
+                        padding: EdgeInsets.all(15),
+                        child: Text("登录"),
+                        color: Theme.of(context).primaryColor,
+                        textColor: Colors.white,
+                        onPressed: (){
+                          // 在这里通过 Form.of(context) 获取 FormState 是不正确的。
+                          FormState formState = _formKey.currentContext as FormState;
+                          if(formState.validate()){
+                            // 验证通过
+                            print("验证通过");
+                            // 重置
+                            formState.reset();
+                          }
+                        },
+                      ),
+                    )
+                  ],
+                ),
+              )
+            ],
+          ),
+        ),
+      ),
+    );
+  }
 }
